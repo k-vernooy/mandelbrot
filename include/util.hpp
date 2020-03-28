@@ -1,9 +1,11 @@
+#pragma once
 #include <vector>
+
 using std::vector;
 
 int rgb_to_color(int& r, int& g, int& b);
 
-vector<vector<int>> colors = {
+static vector<vector<int>> colors = {
     {0,0,0,0},
     {0,0,0,16},
     {0,0,128,4},

@@ -1,12 +1,15 @@
-OBJECTS := build/util.o build/mandelbrot.o build/main.o
+BUILD = build
+OBJECTS := $(BUILD)/util.o $(BUILD)/mandelbrot.o $(BUILD)/main.o
 CC = g++
-CV = std=c++11
+CV = -std=c++11
 
 all: compile
-compile: $(OBJECTS)
-	mkdir -p build bin
+compile: setup $(OBJECTS)
 	$(CC) $(CV) $(OBJECTS) -o bin/mandelbrot
 
 # object file targets:
-*/%.o: src/%.cpp
+$(BUILD)/%.o: src/%.cpp
 	$(CC) $(CV) $< -c -o $@
+
+setup:
+	mkdir -p build bin
