@@ -22,6 +22,24 @@ int main() {
             case 'o':
                 canvas.zoom(false);
                 break;
+            case 'q':
+                stop = true;
+                break;
+            case KEY_UP:
+                canvas.move(1);
+                break;
+            case KEY_RIGHT:
+                canvas.move(2);
+                break;
+            case KEY_DOWN:
+                canvas.move(3);
+                break;
+            case KEY_LEFT:
+                canvas.move(4);
+                break;
+            case 'r':
+                canvas.reset();
+                break;
         }
 
         canvas.draw();

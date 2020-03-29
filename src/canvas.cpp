@@ -36,6 +36,44 @@ void Canvas::update_mandelbrot() {
 }
 
 
+void Canvas::zoom(bool in) {
+    double sf = 2;
+
+    if (in) {
+        top_left = complex<double> (top_left.real() * (1.0 / sf), top_left.imag() * (1.0 / sf));
+        bottom_right = complex<double> (bottom_right.real() * (1.0 / sf), bottom_right.imag() * (1.0 / sf));
+    }
+    else {
+        top_left = complex<double> (top_left.real() * sf, top_left.imag() * sf);
+        bottom_right = complex<double> (bottom_right.real() * sf, bottom_right.imag() * sf);
+    }
+}
+
+
+void Canvas::move(int dir) {
+    array<int, 2> dimensions = this->terminal_dim();
+    double step_right = (bottom_right.real() - top_left.real()) / (double) dimensions[1];
+    double step_down = (top_left.imag() - bottom_right.imag()) / (double) dimensions[0];
+
+    if (dir == 1) {
+        bottom_right = complex<double> (bottom_right.real(), bottom_right.imag() - step_down);
+        top_left = complex<double> (top_left.real(), top_left.imag() - step_down);
+    }
+    else if (dir == 2) {
+        bottom_right = complex<double> (bottom_right.real() + step_right, bottom_right.imag());
+        top_left = complex<double> (top_left.real() + step_right, top_left.imag());
+    }
+    else if (dir == 3) {
+        bottom_right = complex<double> (bottom_right.real(), bottom_right.imag() + step_down);
+        top_left = complex<double> (top_left.real(), top_left.imag() + step_down);
+    }
+    else if (dir == 4) {
+        bottom_right = complex<double> (bottom_right.real() - step_right, bottom_right.imag());
+        top_left = complex<double> (top_left.real() - step_right, top_left.imag());
+    }
+}
+
+
 void Canvas::clear() {
     for (int i = 0; i < screen.size(); i++) {
         for (int j = 0; j < screen[i].size(); j++) {
@@ -63,6 +101,12 @@ void Canvas::draw() {
 }
 
 
+void Canvas::reset() {
+    this->top_left = complex<double> (-2.0, 1);
+    this->bottom_right = complex<double> (2.0, -1.25);
+}
+
+
 Canvas::Canvas() {
     setlocale(LC_CTYPE, "");
     initscr();
@@ -75,20 +119,6 @@ Canvas::Canvas() {
 
     this->top_left = complex<double> (-2.0, 1);
     this->bottom_right = complex<double> (2.0, -1.25);
-}
-
-
-void Canvas::zoom(bool in) {
-    double sf = 2;
-
-    if (in) {
-        top_left = complex<double> (top_left.real() * (1.0 / sf), top_left.imag() * (1.0 / sf));
-        bottom_right = complex<double> (bottom_right.real() * (1.0 / sf), bottom_right.imag() * (1.0 / sf));
-    }
-    else {
-        top_left = complex<double> (top_left.real() * sf, top_left.imag() * sf);
-        bottom_right = complex<double> (bottom_right.real() * sf, bottom_right.imag() * sf);
-    }
 }
 
 

@@ -20,9 +20,11 @@ class Canvas {
     void update_mandelbrot();
 
     public:
+        void move(int direction);
         void zoom(bool in);
         void clear();
         void draw();
+        void reset();
         Canvas();
         ~Canvas();
 };
