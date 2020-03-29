@@ -12,23 +12,18 @@ int main() {
     bool stop = false;
 
     canvas.draw();
+
     while (!stop) {
-        cout << std::flush;
-        // int ch = getch();
-    //     mvprintw(0,0, std::to_string(ch).c_str());
+        int ch = getch();
+        switch (ch) {
+            case 'i':
+                canvas.zoom(true);
+                break;
+            case 'o':
+                canvas.zoom(false);
+                break;
+        }
+
+        canvas.draw();
     }
-
-    // int width = 250, height = 100;
-    // for (int i = 0; i < height; i += 2) {
-    //     for (int j = 0; j < width; j += 1) {
-    //         double x = (double)(i - (height / 2)) / 50.0;
-    //         double y = (double)(j - (width / 2)) / 50.0;
-    //         // cout << x << ", " << y << ": ";
-    //         complex<double> c(y, x);
-
-    //         if (mandelbrot(c) == MAX_ITERATIONS) cout << "*";
-    //         else cout << " ";
-    //     }
-    //     cout << endl;
-    // }
 }
