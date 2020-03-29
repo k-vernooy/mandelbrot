@@ -15,6 +15,8 @@ array<int, 2> Canvas::terminal_dim() {
     struct winsize size;
     ioctl(STDOUT_FILENO,TIOCGWINSZ,&size);
 
+    mvprintw(0, 0, std::to_string(size.ws_row).c_str());
+    mvprintw(1, 0, std::to_string(size.ws_col).c_str());
     return {size.ws_row - 1, size.ws_col - 1};
 }
 
@@ -33,38 +35,62 @@ void Canvas::update_mandelbrot() {
     }
 }
 
+
+void Canvas::clear() {
+    for (int i = 0; i < screen.size(); i++) {
+        for (int j = 0; j < screen[i].size(); j++) {
+            mvprintw(i,j," ");
+        }
+    }
+
+    this->screen.clear();
+}
+
+
 void Canvas::draw() {
+    this->clear();
     this->update_mandelbrot();
 
     for (int i = 0; i < screen.size(); i++) {
         for (int j = 0; j < screen[i].size(); j++) {
             if (screen[i][j] == MAX_ITERATIONS) {
-                cout << "*";
+                mvprintw(i,j,"*");
             }
-            else cout << " ";
-                // mvprintw(i,j,"*");
-            // cout << std::flush;
-            // }
             // int color = color_map[screen[i][j]];
             // mvprintw(i, j, string("\e[48;5;" + std::to_string(color) + "m").c_str());
         }
-        cout << endl;
     }
 }
 
-Canvas::Canvas() {
-    // setlocale(LC_CTYPE, "");
-    // initscr();
-    // noecho();
-    // keypad(stdscr, TRUE);
-    // // nodelay(stdscr, TRUE);
-    // curs_set(0);
-    // start_color();
-    // use_default_colors();
 
-    this->top_left = complex<double> (-2.0, 2.0);
-    this->bottom_right = complex<double> (2.0, -2.0);
+Canvas::Canvas() {
+    setlocale(LC_CTYPE, "");
+    initscr();
+    noecho();
+    keypad(stdscr, TRUE);
+    // nodelay(stdscr, TRUE);
+    curs_set(0);
+    start_color();
+    use_default_colors();
+
+    this->top_left = complex<double> (-2.0, 1);
+    this->bottom_right = complex<double> (2.0, -1.25);
 }
+
+
+void Canvas::zoom(bool in) {
+    double sf = 2;
+
+    if (in) {
+        top_left = complex<double> (top_left.real() * (1.0 / sf), top_left.imag() * (1.0 / sf));
+        bottom_right = complex<double> (bottom_right.real() * (1.0 / sf), bottom_right.imag() * (1.0 / sf));
+    }
+    else {
+        top_left = complex<double> (top_left.real() * sf, top_left.imag() * sf);
+        bottom_right = complex<double> (bottom_right.real() * sf, bottom_right.imag() * sf);
+    }
+}
+
 
 Canvas::~Canvas() {
     endwin();
