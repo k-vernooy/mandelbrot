@@ -17,10 +17,11 @@ class Canvas {
 
     array<int, 2> terminal_dim();
 
-    void mandelbrot();
+    void update_mandelbrot();
     void draw();
     void zoom(bool in);
 
-    Canvas();
-    ~Canvas();
+    public:
+        Canvas();
+        ~Canvas();
 };

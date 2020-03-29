@@ -1,12 +1,12 @@
 BUILD := build
-OBJECTS := $(BUILD)/util.o $(BUILD)/mandelbrot.o $(BUILD)/main.o
-HEADERS := include/mandelbrot.hpp include/util.hpp
+OBJECTS := $(BUILD)/util.o $(BUILD)/mandelbrot.o $(BUILD)/main.o $(BUILD)/canvas.o
+HEADERS := include/mandelbrot.hpp include/util.hpp include/canvas.hpp
 CC := g++
 CV := -std=c++11
 
 all: compile
 compile: setup $(OBJECTS)
-	$(CC) $(CV) $(OBJECTS) -o bin/mandelbrot
+	$(CC) $(CV) $(OBJECTS) -lncurses -o bin/mandelbrot
 
 # object file targets:
 $(BUILD)/%.o: src/%.cpp $(HEADERS)
