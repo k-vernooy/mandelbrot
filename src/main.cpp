@@ -11,9 +11,11 @@ int main() {
     Canvas canvas = Canvas();
     bool stop = false;
 
+    canvas.draw();
     while (!stop) {
-        int ch = getch();
-        mvprintw(0,0, std::to_string(ch).c_str());
+        cout << std::flush;
+        // int ch = getch();
+    //     mvprintw(0,0, std::to_string(ch).c_str());
     }
 
     // int width = 250, height = 100;

@@ -18,10 +18,10 @@ class Canvas {
     array<int, 2> terminal_dim();
 
     void update_mandelbrot();
-    void draw();
     void zoom(bool in);
 
     public:
+        void draw();
         Canvas();
         ~Canvas();
 };
