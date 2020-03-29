@@ -16,8 +16,11 @@ class Canvas {
     complex<double> bottom_right;
 
     array<int, 2> terminal_dim();
+
+    void mandelbrot();
     void draw();
     void zoom(bool in);
 
     Canvas();
+    ~Canvas();
 };

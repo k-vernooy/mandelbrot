@@ -1,14 +1,15 @@
-BUILD = build
+BUILD := build
 OBJECTS := $(BUILD)/util.o $(BUILD)/mandelbrot.o $(BUILD)/main.o
-CC = g++
-CV = -std=c++11
+HEADERS := include/mandelbrot.hpp include/util.hpp
+CC := g++
+CV := -std=c++11
 
 all: compile
 compile: setup $(OBJECTS)
 	$(CC) $(CV) $(OBJECTS) -o bin/mandelbrot
 
 # object file targets:
-$(BUILD)/%.o: src/%.cpp
+$(BUILD)/%.o: src/%.cpp $(HEADERS)
 	$(CC) $(CV) $< -c -o $@
 
 setup:

@@ -10,3 +10,18 @@ Canvas::draw() {
         }
     }
 }
+
+Canvas::Canvas() {
+    setlocale(LC_CTYPE, "");
+    initscr();
+    noecho();
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+    curs_set(0);
+    start_color();
+    use_default_colors();
+}
+
+Canvas::~Canvas() {
+    endwin();
+}
