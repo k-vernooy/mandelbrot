@@ -25,6 +25,9 @@ void Canvas::update_mandelbrot() {
     double step_right = (bottom_right.real() - top_left.real()) / (double) dimensions[1];
     double step_down = (top_left.imag() - bottom_right.imag()) / (double) dimensions[0];
 
+    // step_right /= 2.0;
+    step_down /= 2.0;
+
     for (double j = bottom_right.imag(); j < top_left.imag(); j += step_down) {
         vector<int> row;
         for (double i = top_left.real(); i < bottom_right.real(); i += step_right) {
@@ -89,14 +92,21 @@ void Canvas::draw() {
     this->clear();
     this->update_mandelbrot();
 
-    for (int i = 0; i < screen.size(); i++) {
+    int x = 0;
+    int a = 0;
+
+    for (int i = 0; i < screen.size(); i += 2) {
         for (int j = 0; j < screen[i].size(); j++) {
-            if (screen[i][j] == MAX_ITERATIONS) {
-                mvprintw(i,j,"*");
-            }
+            a++;
+            // if (screen[i][j] == MAX_ITERATIONS) {
+            attron(COLOR_PAIR(screen[i][j]));
+            mvprintw(x,j, "█");
+            attroff(COLOR_PAIR(a));
+            // }
             // int color = color_map[screen[i][j]];
             // mvprintw(i, j, string("\e[48;5;" + std::to_string(color) + "m").c_str());
         }
+        x++;
     }
 }
 
@@ -119,6 +129,16 @@ Canvas::Canvas() {
 
     this->top_left = complex<double> (-2.0, 1);
     this->bottom_right = complex<double> (2.0, -1.25);
+
+    this->color_map = {
+        {1, 17},
+        {2, 19},
+        {MAX_ITERATIONS, 15}
+    };
+
+    for (auto& [key, value]: this->color_map) {
+        init_pair(key, value, -1);
+    }
 }
 
 

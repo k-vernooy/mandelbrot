@@ -1,13 +1,18 @@
+#include <iostream>
+#include <ncurses.h>
+#include <string>
+
 #include "../include/util.hpp"
 #include "../include/mandelbrot.hpp"
 #include "../include/canvas.hpp"
-#include <iostream>
-#include <ncurses.h>
 
 using std::cout;
 using std::endl;
+using std::string;
 
 int main() {
+
+    putenv("TERM=xterm-256color");
     Canvas canvas = Canvas();
     bool stop = false;
 
