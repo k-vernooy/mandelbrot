@@ -14,9 +14,6 @@ using std::endl;
 array<int, 2> Canvas::terminal_dim() {
     struct winsize size;
     ioctl(STDOUT_FILENO,TIOCGWINSZ,&size);
-
-    mvprintw(0, 0, std::to_string(size.ws_row).c_str());
-    mvprintw(1, 0, std::to_string(size.ws_col).c_str());
     return {size.ws_row - 1, size.ws_col - 1};
 }
 
@@ -40,16 +37,24 @@ void Canvas::update_mandelbrot() {
 
 
 void Canvas::zoom(bool in) {
-    double sf = 2;
+    double sf = 2.0;
+    if (in) sf = 0.5;
 
-    if (in) {
-        top_left = complex<double> (top_left.real() * (1.0 / sf), top_left.imag() * (1.0 / sf));
-        bottom_right = complex<double> (bottom_right.real() * (1.0 / sf), bottom_right.imag() * (1.0 / sf));
-    }
-    else {
-        top_left = complex<double> (top_left.real() * sf, top_left.imag() * sf);
-        bottom_right = complex<double> (bottom_right.real() * sf, bottom_right.imag() * sf);
-    }
+    complex<double> center(
+            (top_left.real() + bottom_right.real()) / 2.0, 
+            (top_left.imag() + bottom_right.imag()) / 2.0
+        );
+
+
+    top_left = complex<double> (
+            center.real() - ((center.real() - top_left.real()) * sf),
+            center.imag() - ((center.imag() - top_left.imag()) * sf)
+        );
+
+    bottom_right = complex<double> (
+            center.real() - ((center.real() - bottom_right.real()) * sf),
+            center.imag() - ((center.imag() - bottom_right.imag()) * sf)
+        );
 }
 
 
@@ -108,6 +113,12 @@ void Canvas::draw() {
         }
         x++;
     }
+
+    mvprintw(0,0,std::to_string(top_left.real()).c_str());
+    mvprintw(1,0,std::to_string(top_left.imag()).c_str());
+    mvprintw(2,0,std::to_string(bottom_right.real()).c_str());
+    mvprintw(3,0,std::to_string(bottom_right.imag()).c_str());
+
 }
 
 
@@ -131,9 +142,89 @@ Canvas::Canvas() {
     this->bottom_right = complex<double> (2.0, -1.25);
 
     this->color_map = {
-        {1, 17},
-        {2, 19},
-        {MAX_ITERATIONS, 15}
+        {1, 208},
+        {2, 214},
+        {3, 220},
+        {4, 220},
+        {5, 221},
+        {6, 222},
+        {7, 227},
+        {8, 226},
+        {9, 226},
+        {10, 190},
+        {11, 154},
+        {12, 118},
+        {13, 46},
+        {14, 76},
+        {15, 2},
+        {16, 41},
+        {17, 42},
+        {18, 72},
+        {19, 30},
+        {20, 33},
+        {21, 21},
+        {22, 20},
+        {23, 19},
+        {24, 19},
+        {25, 54},
+        {26, 55},
+        {27, 57},
+        {28, 92},
+        {29, 129},
+        {30, 127},
+        {31, 125},
+        {32, 124},
+        {33, 160},
+        {34, 196},
+        {35, 202},
+        {36, 208},
+        {37, 214},
+        {38, 220},
+        {39, 220},
+        {40, 221},
+        {41, 222},
+        {42, 227},
+        {43, 226},
+        {44, 226},
+        {45, 190},
+        {46, 154},
+        {47, 118},
+        {48, 46},
+        {49, 76},
+        {50, 2},
+        {51, 41},
+        {52, 42},
+        {53, 72},
+        {54, 30},
+        {55, 33},
+        {56, 21},
+        {57, 20},
+        {58, 19},
+        {59, 19},
+        {60, 54},
+        {61, 55},
+        {62, 57},
+        {63, 92},
+        {64, 129},
+        {65, 127},
+        {66, 125},
+        {67, 124},
+        {68, 160},
+        {69, 196},
+
+        // {58, 56},
+        // {59, 16},
+        // {60, 16},
+        // {61, 16},
+        // {62, 16},
+        // {63, 16},
+        // {64, 16},
+        // {65, 16},
+        // {66, 16},
+        // {67, 16},
+        // {68, 16},
+        // {69, 16},
+        {MAX_ITERATIONS, 16}
     };
 
     for (auto& [key, value]: this->color_map) {
