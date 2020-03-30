@@ -14,3 +14,6 @@ $(BUILD)/%.o: src/%.cpp $(HEADERS)
 
 setup:
 	mkdir -p build bin
+
+install:
+	@install -m 0755 bin/mandelbrot /usr/local/bin
