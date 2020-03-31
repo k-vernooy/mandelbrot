@@ -8,6 +8,7 @@ using std::array;
 using std::complex;
 using std::map;
 
+
 class Canvas {
     vector<vector<int> > screen;
     
