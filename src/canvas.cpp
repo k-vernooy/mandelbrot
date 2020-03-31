@@ -1,9 +1,19 @@
+/*=====================================
+ canvas.cpp               modified 3/31
+ k-vernooy
+
+ Canvas class methods for writing,
+ printing, and manipulating the screen,
+ and calculating/coloring the mandelbrot
+ set
+=======================================*/
+
+
 #include <ncurses.h>
 #include <string>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <iostream>
-
 #include "../include/canvas.hpp"
 #include "../include/mandelbrot.hpp"
 
@@ -11,18 +21,35 @@ using std::string;
 using std::cout;
 using std::endl;
 
+
 array<int, 2> Canvas::terminal_dim() {
+    /*
+        @desc: retrieves the current dimensions of the terminal
+        @params: none
+        @return: `array<int, 2>` size of terminal in format {rows, columns}
+    */
+
     struct winsize size;
     ioctl(STDOUT_FILENO,TIOCGWINSZ,&size);
     return {size.ws_row - 1, size.ws_col - 1};
 }
 
+
 void Canvas::update_mandelbrot() {
+    /*
+        @desc: calculates values of mandelbrot iteration for each coordinate 
+        @params: none
+        @return: `void`
+    */
+
+
     array<int, 2> dimensions = this->terminal_dim();
+
+    // get amount by which coordinates step per character on screen
     double step_right = (bottom_right.real() - top_left.real()) / (double) dimensions[1];
     double step_down = (top_left.imag() - bottom_right.imag()) / (double) dimensions[0];
 
-    // step_right /= 2.0;
+    // for resolution doubling trick
     step_down /= 2.0;
 
     for (double j = bottom_right.imag(); j < top_left.imag(); j += step_down) {
@@ -37,15 +64,24 @@ void Canvas::update_mandelbrot() {
 
 
 void Canvas::zoom(bool in) {
+    /*
+        @desc: zooms in or out on the canvas
+        @params: `bool` in: whether or not to zoom in
+        @return: `void`
+    */
+
+    // get scale factor (in/out)
     double sf = 2.0;
     if (in) sf = 0.5;
 
+    // find center by midpoint of corners
     complex<double> center(
             (top_left.real() + bottom_right.real()) / 2.0, 
             (top_left.imag() + bottom_right.imag()) / 2.0
         );
 
 
+    // multiply distance from center by `sf`
     top_left = complex<double> (
             center.real() - ((center.real() - top_left.real()) * sf),
             center.imag() - ((center.imag() - top_left.imag()) * sf)
@@ -59,85 +95,125 @@ void Canvas::zoom(bool in) {
 
 
 void Canvas::move(int dir) {
+    /*
+        @desc: translate canvas up, down, left, right
+        @params: `int` dir: direction to move in - 1 up, 2 right, 3 down, 4 left
+        @return: `void`
+    */
+
+    // get {width, height} of terminal
     array<int, 2> dimensions = this->terminal_dim();
+    
+    // determine how much scope changes per fullblock character change
     double step_right = (bottom_right.real() - top_left.real()) / (double) dimensions[1];
     double step_down = (top_left.imag() - bottom_right.imag()) / (double) dimensions[0];
 
+
     if (dir == 1) {
+        // translate up with subtraction of step_down
         bottom_right = complex<double> (bottom_right.real(), bottom_right.imag() - step_down);
         top_left = complex<double> (top_left.real(), top_left.imag() - step_down);
     }
     else if (dir == 2) {
+        // translate right with addition of step_right
         bottom_right = complex<double> (bottom_right.real() + step_right, bottom_right.imag());
         top_left = complex<double> (top_left.real() + step_right, top_left.imag());
     }
     else if (dir == 3) {
+        // translate down with addition of step_down
         bottom_right = complex<double> (bottom_right.real(), bottom_right.imag() + step_down);
         top_left = complex<double> (top_left.real(), top_left.imag() + step_down);
     }
     else if (dir == 4) {
+        // translate left with subtraction of step_right
         bottom_right = complex<double> (bottom_right.real() - step_right, bottom_right.imag());
         top_left = complex<double> (top_left.real() - step_right, top_left.imag());
     }
+
+    return;
 }
 
 
 void Canvas::clear() {
+    /*
+        @desc: clears the screen's canvas and prints empty chars
+        @params: none
+        @return: `void`
+    */
+
+    // print characters to clear the screen
     for (int i = 0; i < screen.size(); i++) {
         for (int j = 0; j < screen[i].size(); j++) {
             mvprintw(i,j," ");
         }
     }
 
+    // clear screen vector
     this->screen.clear();
+    return;
+
 }
 
 
 void Canvas::draw() {
+    /*
+        @desc:
+            prints the contents of the @attr `screen`
+            with color coding from the @attr `color_map`
+
+        @params: none
+        @return: `void`
+    */
+
     this->clear();
     this->update_mandelbrot();
 
-    int x = 0;
-    int a = 0;
+    int x = 0, a = 1;
 
     for (int i = 0; i < screen.size(); i += 2) {
         for (int j = 0; j < screen[i].size(); j++) {
-            a++;
-            // if (screen[i][j] == MAX_ITERATIONS) {
             attron(COLOR_PAIR(screen[i][j]));
             mvprintw(x,j, "█");
             attroff(COLOR_PAIR(a));
-            // }
-            // int color = color_map[screen[i][j]];
-            // mvprintw(i, j, string("\e[48;5;" + std::to_string(color) + "m").c_str());
+            a++;
         }
         x++;
     }
-
-    mvprintw(0,0,std::to_string(top_left.real()).c_str());
-    mvprintw(1,0,std::to_string(top_left.imag()).c_str());
-    mvprintw(2,0,std::to_string(bottom_right.real()).c_str());
-    mvprintw(3,0,std::to_string(bottom_right.imag()).c_str());
-
 }
 
 
 void Canvas::reset() {
+    /*
+        @desc: returns the canvas to default coordinates
+        @params: none
+        @return: void
+    */
+
     this->top_left = complex<double> (-2.0, 1);
     this->bottom_right = complex<double> (2.0, -1.25);
 }
 
 
 Canvas::Canvas() {
+    /*
+        @desc:
+            initializes curses window, sets
+            default coords, initializes color_map
+
+        @params: none
+        @return: none
+    */
+
+    // init curses
     setlocale(LC_CTYPE, "");
     initscr();
     noecho();
     keypad(stdscr, TRUE);
-    // nodelay(stdscr, TRUE);
-    curs_set(0);
     start_color();
     use_default_colors();
 
+    // set default coordinates
+    // TODO: scale based on terminal dim
     this->top_left = complex<double> (-2.0, 1);
     this->bottom_right = complex<double> (2.0, -1.25);
 
@@ -263,9 +339,9 @@ Canvas::Canvas() {
         {119, 19},
         {120, 19},
         {121, 196},
-
         {MAX_ITERATIONS, 16}
     };
+
 
     for (auto& [key, value]: this->color_map) {
         init_pair(key, value, -1);
@@ -274,5 +350,11 @@ Canvas::Canvas() {
 
 
 Canvas::~Canvas() {
+    /*
+        @desc: cleans up ncurses
+        @params: none
+        @return: void
+    */
+
     endwin();
 }
