@@ -80,7 +80,7 @@ void Canvas::render(int width, int height) {
         @return: `void`
     */
 
-    vector<vector<int> > scr;
+    vector<vector<double> > scr;
 
     // get amount by which coordinates step per character on screen
     double step_right = (bottom_right.real() - top_left.real()) / (double) width;
@@ -88,7 +88,7 @@ void Canvas::render(int width, int height) {
 
 
     for (double j = bottom_right.imag(); j < top_left.imag(); j += step_down) {
-        vector<int> row;
+        vector<double> row;
         for (double i = top_left.real(); i < bottom_right.real(); i += step_right) {
             complex<double> c(i, j);
             row.push_back(mandelbrot(c));
@@ -99,10 +99,16 @@ void Canvas::render(int width, int height) {
     Uint32* background = new Uint32[width * height];
 
     int i = 0;
-    for (vector<int> row : scr) {
+    for (vector<double> row : scr) {
         int j = 0;
-        for (int val : row) {
-            array<int, 3> rgb = color_to_rgb(this->color_map[val]);
+        for (double val : row) {
+            double interpolator = ceil(val) - val;
+
+            array<int, 3> ar1 = color_to_rgb(this->color_map[val]);
+            array<int, 3> ar2 = color_to_rgb(this->color_map[val + 1]);
+            array<int, 3> hsl = interpolate_hsl(rgb_to_hsl(ar1), rgb_to_hsl(ar2), interpolator);
+            array<int, 3> rgb = hsl_to_rgb(hsl);
+            
             Uint32 x = rgb_to_uint(rgb[0], rgb[1], rgb[2]);
             background[(width * i) + j] = x;
             j++;
