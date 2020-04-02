@@ -6,7 +6,7 @@ CV := -std=c++11
 
 all: compile
 compile: setup $(OBJECTS)
-	$(CC) $(CV) $(OBJECTS) -lncurses -o bin/mandelbrot
+	$(CC) $(CV) $(OBJECTS) -lncurses -lSDL2 -lSDL2main -o bin/mandelbrot
 
 # object file targets:
 $(BUILD)/%.o: src/%.cpp $(HEADERS)

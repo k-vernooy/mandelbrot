@@ -1,11 +1,22 @@
-#pragma once
-#include <vector>
+/*=====================================
+ util.hpp                  modified 4/1
+ k-vernooy
 
-using std::vector;
+ Useful functions for color conversions
+ and definitions for the color map.
+======================================*/
+
+#pragma once
+
+#include <vector>
+#include <array>
+#include <SDL2/SDL.h>
 
 int rgb_to_color(int& r, int& g, int& b);
+std::array<int, 3> color_to_rgb(int c);
+Uint32 rgb_to_uint(int r, int g, int b);
 
-static vector<vector<int>> colors = {
+static std::vector<std::vector<int>> colors = {
     {0,0,0,0},
     {0,0,0,16},
     {0,0,128,4},
