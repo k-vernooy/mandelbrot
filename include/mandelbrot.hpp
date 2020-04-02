@@ -4,4 +4,4 @@
 using std::complex;
 
 static int MAX_ITERATIONS = 122;
-int mandelbrot(complex<double>& c);
+double mandelbrot(complex<double>& c);

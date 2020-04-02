@@ -21,7 +21,6 @@
 #include "../include/canvas.hpp"
 #include "../include/mandelbrot.hpp"
 
-
 using std::string;
 using std::cout;
 using std::endl;
@@ -249,8 +248,10 @@ void Canvas::draw() {
 
     for (int i = 0; i < screen.size(); i += 2) {
         for (int j = 0; j < screen[i].size(); j++) {
-            attron(COLOR_PAIR(screen[i][j]));
+            // set correct color
+            attron(COLOR_PAIR(screen[i][j] + 1));
             mvprintw(x,j, "█");
+            // remove color
             attroff(COLOR_PAIR(a));
             a++;
         }
@@ -266,6 +267,7 @@ void Canvas::reset() {
         @return: void
     */
 
+    // set coordinates to their initial default
     this->top_left = complex<double> (-2.0, 1);
     this->bottom_right = complex<double> (2.0, -1.25);
 }
@@ -281,6 +283,30 @@ Canvas::Canvas() {
         @return: none
     */
 
+    // set default coordinates
+    // TODO: scale based on terminal dim
+    array<int, 2> dim = this->terminal_dim(); // {height, width}
+    double r = 0.55;
+    dim[1] = r * dim[1];
+
+    if (dim[0] > dim[1]) {
+        double ratio = (double) dim[0] / (double) dim[1];
+        cout << "x " << ratio << endl;
+        this->top_left = complex<double> (-2.0, 2.0 * ratio);
+        this->bottom_right = complex<double> (2.0, -2.0 * ratio);
+    }
+    else {
+        double ratio = (double) dim[1] / (double) dim[0];
+        cout << dim[1] << ", " << dim[0] << endl;
+        this->top_left = complex<double> (-2.0 * ratio, 2.0);
+        this->bottom_right = complex<double> (2.0 * ratio, -2.0);
+    }
+
+    cout << this->top_left.real() << ", " << this->top_left.imag() << endl;
+    cout << this->bottom_right.real() << ", " << this->bottom_right.imag() << endl;
+
+    usleep(100000);
+
     // init curses
     setlocale(LC_CTYPE, "");
     initscr();
@@ -289,12 +315,9 @@ Canvas::Canvas() {
     start_color();
     use_default_colors();
 
-    // set default coordinates
-    // TODO: scale based on terminal dim
-    this->top_left = complex<double> (-2.0, 1);
-    this->bottom_right = complex<double> (2.0, -1.25);
 
     this->color_map = {
+        {0, 202},
         {1, 202},
         {2, 208},
         {3, 214},
@@ -421,7 +444,7 @@ Canvas::Canvas() {
 
 
     for (auto& [key, value]: this->color_map) {
-        init_pair(key, value, -1);
+        init_pair(key + 1, value, -1);
     }
 }
 

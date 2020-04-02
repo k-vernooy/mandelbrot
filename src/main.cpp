@@ -31,7 +31,7 @@ int main() {
         @return: `int` status
     */
 
-
+   
     // use full 256 color
     putenv("TERM=xterm-256color");
 
