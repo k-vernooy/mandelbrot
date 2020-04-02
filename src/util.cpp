@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <string>
+#include <iostream>
 
 #include "../include/util.hpp"
 
@@ -70,82 +71,88 @@ Uint32 rgb_to_uint(int r, int g, int b) {
     return rgba;
 }
 
-double hue_to_rgb(int p, int q, int t) {
+double hue_to_rgb(double p, double q, double t) {
     if(t < 0) t += 1;
     if(t > 1) t -= 1;
-    if(t < 1.0/6.0) return p + (q - p) * 6 * t;
+    if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
     if(t < 1.0/2.0) return q;
     if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
     return p;
 }
 
-array<int, 3> hsl_to_rgb(array<int, 3> hsl){
-    int r, g, b;
 
-    if (hsl[1] == 0){
-        r = hsl[2];
-        g = hsl[2];
-        b = hsl[2]; // achromatic
+array<int, 3> hsl_to_rgb(array<double, 3> hsl) {
+    double r, g, b;
+
+    if (hsl[1] == 0.0) {
+        r = g = b = hsl[2]; // achromatic
     }
     else {
-        int q = hsl[2] < 0.5 ? hsl[2] * (1 + hsl[1]) : hsl[2] + hsl[1] - hsl[2] * hsl[1];
-        int p = 2 * hsl[2] - q;
-        r = hue_to_rgb(p, q, hsl[2] + 1.0/3.0);
+        double q = (hsl[2] < 0.5) ? hsl[2] * (1.0 + hsl[1]) : hsl[2] + hsl[1] - hsl[2] * hsl[1];
+        // std::cout << std::endl << "q: " << q << ", " << hsl[2] << std::endl;
+        double p = 2.0 * hsl[2] - q;
+
+        r = hue_to_rgb(p, q, hsl[0] + 1.0/3.0);
         g = hue_to_rgb(p, q, hsl[0]);
         b = hue_to_rgb(p, q, hsl[0] - 1.0/3.0);
     }
 
-    return {(int)round(r * 255), (int)round(g * 255), (int)round(b * 255)};
+    return { (int)(r * 255.0), (int)(g * 255.0), (int) (b * 255.0) };
 }
 
-array<int, 3> rgb_to_hsl(array<int, 3> rgb) {
-    rgb[0] /= 255, rgb[1] /= 255, rgb[2] /= 255;
-    int max = rgb[*std::max_element(rgb.begin(), rgb.end())];
-    int min = rgb[*std::min_element(rgb.begin(), rgb.end())];
-    int h, s, l = (max + min) / 2;
+
+array<double, 3> rgb_to_hsl(array<int, 3> rgb) {
+    double r = (double) rgb[0] / 255.0;
+    double g = (double) rgb[1] / 255.0;
+    double b = (double) rgb[2] / 255.0;
+
+    double max = (double)*std::max_element(rgb.begin(), rgb.end()) / 255.0,
+           min = (double)*std::min_element(rgb.begin(), rgb.end()) / 255.0;
+
+    double h, s, l = (max + min) / 2.0;
 
     if (max == min) {
-        h = 0;
-        s = 0; // achromatic
+        h = 0.0;
+        s = 0.0; // achromatic
     }
     else {
-        int d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        
-        if (max == rgb[0]) h = (rgb[1] - rgb[2]) / d + (rgb[1] < rgb[2] ? 6 : 0);
-        else if (max == rgb[1]) h = (rgb[2] - rgb[0]) / d + 2;
-        else h = (rgb[0] - rgb[1]) / d + 4;
+        double d = max - min;
+        s = (l > 0.5) ? (d / (2.0 - max - min)) : (d / (max + min));
 
-        h /= 6;
+        if (max == r) h = (g - b) / d + ((g < b) ? 6.0 : 0.0);
+        else if (max == g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+
+        h /= 6.0;
     }
 
-    return {h, s, l};
+    return { h, s, l };
 }
 
 
-array<int, 3> interpolate_hsl(array<int, 3> hsl1, array<int, 3> hsl2, double interpolator) {
+array<double, 3> interpolate_hsl(array<double, 3> hsl1, array<double, 3> hsl2, double interpolator) {
 
-    int h,s,l;
+    double h,s,l;
 
     if (hsl1[0] < hsl2[0]) {
-        h = hsl1[0] + (double)(hsl2[0] - hsl1[0]) * interpolator;
+        h = hsl1[0] + ((double)(hsl2[0] - hsl1[0]) * interpolator);
     }
     else {
-        h = hsl2[0] + (double)(hsl1[0] - hsl2[0]) * interpolator;
+        h = hsl2[0] + ((double)(hsl1[0] - hsl2[0]) * interpolator);
     }
 
     if (hsl1[1] < hsl2[1]) {
-        h = hsl1[1] + (double)(hsl2[1] - hsl1[1]) * interpolator;
+        s = hsl1[1] + ((double)(hsl2[1] - hsl1[1]) * interpolator);
     }
     else {
-        h = hsl2[1] + (double)(hsl1[1] - hsl2[1]) * interpolator;
+        s = hsl2[1] + ((double)(hsl1[1] - hsl2[1]) * interpolator);
     }
 
     if (hsl1[2] < hsl2[2]) {
-        h = hsl1[2] + (double)(hsl2[2] - hsl1[2]) * interpolator;
+        l = hsl1[2] + ((double)(hsl2[2] - hsl1[2]) * interpolator);
     }
     else {
-        h = hsl2[2] + (double)(hsl1[2] - hsl2[2]) * interpolator;
+        l = hsl2[2] + ((double)(hsl1[2] - hsl2[2]) * interpolator);
     }
 
     return {h,s,l};

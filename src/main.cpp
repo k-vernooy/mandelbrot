@@ -31,7 +31,7 @@ int main() {
         @return: `int` status
     */
 
-   
+
     // use full 256 color
     putenv("TERM=xterm-256color");
 
@@ -70,11 +70,11 @@ int main() {
                 canvas.reset();
                 break;
             case 'd':
-                canvas.render(600, 800);
+                canvas.render(500, 700);
                 break;
         }
 
         // print canvas to stdscr
         canvas.draw();
     }
-}
+}                     
