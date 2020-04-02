@@ -102,13 +102,14 @@ void Canvas::render(int width, int height) {
     for (vector<double> row : scr) {
         int j = 0;
         for (double val : row) {
-            double interpolator = ceil(val) - val;
-
-            array<int, 3> ar1 = color_to_rgb(this->color_map[val]);
-            array<int, 3> ar2 = color_to_rgb(this->color_map[val + 1]);
-            array<int, 3> hsl = interpolate_hsl(rgb_to_hsl(ar1), rgb_to_hsl(ar2), interpolator);
+            // val--;
+            double interpolator = val - floor(val);
+            // std::cout << val << ", " << interpolator << std::endl;
+            array<int, 3> ar1 = color_to_rgb(this->color_map[floor(val)]);
+            array<int, 3> ar2 = color_to_rgb(this->color_map[floor(val) + 1]);
+            array<double, 3> hsl = interpolate_hsl(rgb_to_hsl(ar1), rgb_to_hsl(ar2), interpolator);
             array<int, 3> rgb = hsl_to_rgb(hsl);
-            
+
             Uint32 x = rgb_to_uint(rgb[0], rgb[1], rgb[2]);
             background[(width * i) + j] = x;
             j++;
@@ -297,22 +298,15 @@ Canvas::Canvas() {
 
     if (dim[0] > dim[1]) {
         double ratio = (double) dim[0] / (double) dim[1];
-        cout << "x " << ratio << endl;
         this->top_left = complex<double> (-2.0, 2.0 * ratio);
         this->bottom_right = complex<double> (2.0, -2.0 * ratio);
     }
     else {
         double ratio = (double) dim[1] / (double) dim[0];
-        cout << dim[1] << ", " << dim[0] << endl;
         this->top_left = complex<double> (-2.0 * ratio, 2.0);
         this->bottom_right = complex<double> (2.0 * ratio, -2.0);
     }
-
-    cout << this->top_left.real() << ", " << this->top_left.imag() << endl;
-    cout << this->bottom_right.real() << ", " << this->bottom_right.imag() << endl;
-
-    usleep(100000);
-
+    
     // init curses
     setlocale(LC_CTYPE, "");
     initscr();
@@ -328,11 +322,11 @@ Canvas::Canvas() {
         {2, 208},
         {3, 214},
         {4, 220},
-        {5, 221},
-        {6, 222},
+        {5, 220},
+        {6, 226},
         {7, 227},
-        {8, 226},
-        {9, 226},
+        {8, 228},
+        {9, 228},
         {10, 190},
         {11, 154},
         {12, 118},

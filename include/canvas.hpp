@@ -23,9 +23,6 @@ class Canvas {
 
     // store a 2d array of ints corresponding to colors
     vector<vector<int> > screen;
-    
-    // for finding color based on output
-    map<int, int> color_map;
 
     // positioning of canvas
     complex<double> top_left;
@@ -48,6 +45,9 @@ class Canvas {
         void draw();
         void reset();
         void render(int width, int height);
+    
+        // for finding color based on output
+        map<int, int> color_map;
 
         Canvas();
         ~Canvas();
