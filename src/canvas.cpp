@@ -14,8 +14,13 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <iostream>
+
+#include <SDL2/SDL.h>
+
+#include "../include/util.hpp"
 #include "../include/canvas.hpp"
 #include "../include/mandelbrot.hpp"
+
 
 using std::string;
 using std::cout;
@@ -60,6 +65,78 @@ void Canvas::update_mandelbrot() {
         }
         this->screen.push_back(row);
     }
+}
+
+
+void Canvas::render(int width, int height) {
+    /*
+        @desc:
+            Create an SDL window and print the colored
+            mandelbrot set to it with gradient shading.
+        
+        @params:
+            `int` width: width of screen
+            `int` height: height of screen
+
+        @return: `void`
+    */
+
+    vector<vector<int> > scr;
+
+    // get amount by which coordinates step per character on screen
+    double step_right = (bottom_right.real() - top_left.real()) / (double) width;
+    double step_down = (top_left.imag() - bottom_right.imag()) / (double) height;
+
+
+    for (double j = bottom_right.imag(); j < top_left.imag(); j += step_down) {
+        vector<int> row;
+        for (double i = top_left.real(); i < bottom_right.real(); i += step_right) {
+            complex<double> c(i, j);
+            row.push_back(mandelbrot(c));
+        }
+        scr.push_back(row);
+    }
+
+    Uint32* background = new Uint32[width * height];
+
+    int i = 0;
+    for (vector<int> row : scr) {
+        int j = 0;
+        for (int val : row) {
+            array<int, 3> rgb = color_to_rgb(this->color_map[val]);
+            Uint32 x = rgb_to_uint(rgb[0], rgb[1], rgb[2]);
+            background[(width * i) + j] = x;
+            j++;
+        }
+        i++;
+    }
+
+    // initialize window
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Event event;
+    SDL_Window* window = SDL_CreateWindow("Drawing", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, height, width, 0);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, width, height);
+    SDL_SetWindowResizable(window, SDL_TRUE);
+    SDL_UpdateTexture(texture, NULL, background, width * sizeof(Uint32));
+
+    bool quit = false;
+
+    while (!quit) {
+        SDL_UpdateTexture(texture, NULL, background, width * sizeof(Uint32));
+        SDL_WaitEvent(&event);
+        if (event.type == SDL_QUIT) quit = true;
+
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);
+    }
+
+    // destroy arrays and SDL objects
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow( window );
+    SDL_Quit();
 }
 
 
@@ -218,9 +295,9 @@ Canvas::Canvas() {
     this->bottom_right = complex<double> (2.0, -1.25);
 
     this->color_map = {
-        {1, 208},
-        {2, 214},
-        {3, 220},
+        {1, 202},
+        {2, 208},
+        {3, 214},
         {4, 220},
         {5, 221},
         {6, 222},
