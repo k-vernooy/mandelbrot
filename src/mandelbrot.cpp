@@ -3,7 +3,7 @@
 
 double mandelbrot(complex<double>& c) {
     
-    int escape = 6;
+    int escape = 2;
     int i = 0;
     complex<double> z(0,0);
     
