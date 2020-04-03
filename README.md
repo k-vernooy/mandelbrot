@@ -24,6 +24,19 @@ This will likely work on macOS and linux, provided the following dependencies ar
 - [SDL2](https://www.libsdl.org/download-2.0.php)
 - [ncurses](https://invisible-island.net/ncurses/)
 
+
+## Demo
+Images captured through use of `mandelbrot`
+### Ascii
+Images from the terminal interface
+<img height=350px src=docs/ascii1.png><img height=350px src=docs/ascii2.png>
+
+### Renders
+Images taken through the gui window
+![Mandelbrot image](docs/gui2.png)
+![Mandelbrot image](docs/gui1.png)
+
+
 ## TODO
 - Better color management
 - Double (or possibly quadruple?) resolution with half/quarter blocks
