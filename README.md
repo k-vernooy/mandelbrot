@@ -1,5 +1,6 @@
 # mandelbrot
-An interactive mandelbrot set viewer for terminal
+An interactive mandelbrot set viewer for terminal  
+
 <img src=docs/gui3.png height=350px>
 
 ## Installation
