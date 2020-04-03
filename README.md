@@ -1,6 +1,6 @@
 # mandelbrot
-
 An interactive mandelbrot set viewer for terminal
+<img src=docs/gui3.png height=350px>
 
 ## Installation
 ```bash
@@ -30,17 +30,15 @@ Images captured through use of `mandelbrot`
 ### Ascii
 Images from the terminal interface   
 <center>
-<img height=350px src=docs/ascii1.png><img height=350px src=docs/ascii2.png>
+<img height=350px src=docs/ascii1.png>
+<img height=350px src=docs/ascii2.png>
 </center>
 
 ### Renders
-Images taken through the gui window
-
+Images taken through the gui window  
 <center>
-![Mandelbrot image](docs/gui2.png)
-![Mandelbrot image](docs/gui1.png)
+<img src=docs/gui2.png height=350px><img src=docs/gui1.png height=350px>
 </center>
-
 
 ## TODO
 - Better color management
