@@ -157,3 +157,16 @@ array<double, 3> interpolate_hsl(array<double, 3> hsl1, array<double, 3> hsl2, d
 
     return {h,s,l};
 }
+
+array<int, 3> interpolate_rgb(array<int, 3> rgb1, array<int, 3> rgb2, double interpolator) {
+
+    // if (interpolator > 0.98) {
+    //     return {0,0,0};
+    // }
+
+    int r = round(rgb1[0] + (double)(rgb2[0] - rgb1[0]) * interpolator);
+    int g = round(rgb1[1] + (double)(rgb2[1] - rgb1[1]) * interpolator);
+    int b = round(rgb1[2] + (double)(rgb2[2] - rgb1[2]) * interpolator);
+
+    return {r, g, b};
+}

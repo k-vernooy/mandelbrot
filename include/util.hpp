@@ -3,7 +3,7 @@
  k-vernooy
 
  Useful functions for color conversions
- 
+
  and definitions for the color map.
 ======================================*/
 
@@ -19,6 +19,8 @@ int rgb_to_color(int& r, int& g, int& b);
 std::array<int, 3> color_to_rgb(int c);
 Uint32 rgb_to_uint(int r, int g, int b);
 array<double, 3> interpolate_hsl(array<double, 3> hsl1, array<double, 3> hsl2, double interpolator);
+array<int, 3> interpolate_rgb(array<int, 3> rgb1, array<int, 3> rgb2, double interpolator);
+
 array<double, 3> rgb_to_hsl(array<int, 3> rgb);
 array<int, 3> hsl_to_rgb(array<double, 3> hsl);
 

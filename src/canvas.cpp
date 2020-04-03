@@ -103,13 +103,14 @@ void Canvas::render(int width, int height) {
         int j = 0;
         for (double val : row) {
             // val--;
-            double interpolator = val - floor(val);
+            val /= 6;
+            double interpolator = (val - floor(val));
             // std::cout << val << ", " << interpolator << std::endl;
             array<int, 3> ar1 = color_to_rgb(this->color_map[floor(val)]);
             array<int, 3> ar2 = color_to_rgb(this->color_map[floor(val) + 1]);
             array<double, 3> hsl = interpolate_hsl(rgb_to_hsl(ar1), rgb_to_hsl(ar2), interpolator);
-            array<int, 3> rgb = hsl_to_rgb(hsl);
-
+            array<int, 3> rgb = interpolate_rgb(ar1, ar2, interpolator);
+            // array<int, 3> rgb = color_to_rgb(this->color_map[floor(val)]);
             Uint32 x = rgb_to_uint(rgb[0], rgb[1], rgb[2]);
             background[(width * i) + j] = x;
             j++;
@@ -323,10 +324,10 @@ Canvas::Canvas() {
         {3, 214},
         {4, 220},
         {5, 220},
-        {6, 226},
-        {7, 227},
-        {8, 228},
-        {9, 228},
+        {6, 220},
+        {7, 226},
+        {8, 226},
+        {9, 227},
         {10, 190},
         {11, 154},
         {12, 118},
