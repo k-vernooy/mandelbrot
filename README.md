@@ -26,15 +26,20 @@ This will likely work on macOS and linux, provided the following dependencies ar
 
 
 ## Demo
-Images captured through use of `mandelbrot`
+Images captured through use of `mandelbrot`  
 ### Ascii
-Images from the terminal interface
+Images from the terminal interface   
+<center>
 <img height=350px src=docs/ascii1.png><img height=350px src=docs/ascii2.png>
+</center>
 
 ### Renders
 Images taken through the gui window
+
+<center>
 ![Mandelbrot image](docs/gui2.png)
 ![Mandelbrot image](docs/gui1.png)
+</center>
 
 
 ## TODO
