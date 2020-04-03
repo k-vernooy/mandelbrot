@@ -70,7 +70,7 @@ int main() {
                 canvas.reset();
                 break;
             case 'd':
-                canvas.render(600, 800);
+                canvas.render(500, 500);
                 break;
         }
 

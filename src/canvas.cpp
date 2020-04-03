@@ -102,17 +102,21 @@ void Canvas::render(int width, int height) {
     for (vector<double> row : scr) {
         int j = 0;
         for (double val : row) {
-            // val--;
-            val /= 6;
-            double interpolator = (val - floor(val));
-            // std::cout << val << ", " << interpolator << std::endl;
-            array<int, 3> ar1 = color_to_rgb(this->color_map[floor(val)]);
-            array<int, 3> ar2 = color_to_rgb(this->color_map[floor(val) + 1]);
-            array<double, 3> hsl = interpolate_hsl(rgb_to_hsl(ar1), rgb_to_hsl(ar2), interpolator);
-            array<int, 3> rgb = interpolate_rgb(ar1, ar2, interpolator);
-            // array<int, 3> rgb = color_to_rgb(this->color_map[floor(val)]);
-            Uint32 x = rgb_to_uint(rgb[0], rgb[1], rgb[2]);
-            background[(width * i) + j] = x;
+            val /= 3.0;
+
+            if (val == MAX_ITERATIONS / 3.0) {
+                background[(width * i) + j] = rgb_to_uint(0,0,0);
+            }
+            else {
+                double interpolator = (val - floor(val));
+                array<int, 3> ar1 = color_to_rgb(this->color_map[floor(val)]);
+                array<int, 3> ar2 = color_to_rgb(this->color_map[floor(val) + 1]);
+                array<int, 3> rgb = interpolate_rgb(ar1, ar2, interpolator);
+
+                Uint32 x = rgb_to_uint(rgb[0], rgb[1], rgb[2]);
+                background[(width * i) + j] = x;
+            }
+
             j++;
         }
         i++;
